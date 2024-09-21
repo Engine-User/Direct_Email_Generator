@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 class Portfolio:
-    def __init__(self, file_path="resource/my_portfolio.csv"):
+    def __init__(self, file_path="my_portfolio.csv"):
         self.file_path = file_path
         self.data = pd.read_csv(file_path)
         self.vectorizer = TfidfVectorizer()
