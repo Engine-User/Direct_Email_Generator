@@ -148,7 +148,7 @@ def create_streamlit_app(llm, portfolio, clean_text):
                 links = portfolio.query_links(data.split())  # Use all words as potential skills
                 email = llm.extract_and_generate_email(data, links)
                 
-                st.subheader("Your Personalized Cold Email:")
+                st.subheader("Your Personalized Direct Email:")
                 st.code(email, language='markdown')
         except Exception as e:
             st.error(f"An Error Occurred: {str(e)}")
