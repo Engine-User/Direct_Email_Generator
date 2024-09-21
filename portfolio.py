@@ -1,31 +1,26 @@
 import pandas as pd
-import chromadb
-import uuid
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 class Portfolio:
     def __init__(self, file_path="resource/my_portfolio.csv"):
         self.file_path = file_path
         self.data = pd.read_csv(file_path)
-        self.chroma_client = chromadb.PersistentClient('vectorstore')
-        self.collection = self.chroma_client.get_or_create_collection(name="portfolio")
+        self.vectorizer = TfidfVectorizer()
+        self.tfidf_matrix = None
 
     def load_portfolio(self):
-        if not self.collection.count():
-            for _, row in self.data.iterrows():
-                self.collection.add(
-                    documents=[row["Techstack"]],
-                    metadatas=[{"links": row["Links"]}],
-                    ids=[str(uuid.uuid4())]
-                )
+        if self.tfidf_matrix is None:
+            self.tfidf_matrix = self.vectorizer.fit_transform(self.data["Techstack"])
 
     def query_links(self, skills):
         if not skills:
-            return []  # Return an empty list if no skills are provided
-        
-        # Ensure skills is a list of strings
+            return []
         if isinstance(skills, str):
             skills = [skills]
         
-        results = self.collection.query(query_texts=skills, n_results=2)
-        return [item['links'] for item in results['metadatas'][0]] if results['metadatas'] else []
+        query_vec = self.vectorizer.transform([' '.join(skills)])
+        cosine_similarities = cosine_similarity(query_vec, self.tfidf_matrix).flatten()
+        related_docs_indices = cosine_similarities.argsort()[::-1][:3]  # Get top 3 matches
+        
+        return [self.data.iloc[i]["Links"] for i in related_docs_indices]
