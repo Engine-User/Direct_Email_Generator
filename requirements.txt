@@ -8,3 +8,4 @@ pandas
 python-dotenv==0.19.2
 hnswlib==0.7.0
 chromadb==0.3.26
+pydantic==1.10.13
