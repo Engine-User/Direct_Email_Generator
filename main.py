@@ -141,27 +141,18 @@ def create_streamlit_app(llm, portfolio, clean_text):
 
     if submit_button:
         try:
-            loader = WebBaseLoader([url_input])
-            data = clean_text(loader.load()[0].page_content)
-            portfolio.load_portfolio()
-            jobs = llm.extract_jobs(data)
-            
-            if not jobs:
-                st.warning("No matching jobs found.")
-            else:
-                for job in jobs:
-                    skills = job.get('skills', [])
-                    if not skills:
-                        st.warning(f"No skills found for job: {job.get('role', 'Unnamed Role')}")
-                        continue
-                    
-                    links = portfolio.query_links(skills)
-                    email = llm.write_mail(job, links)
-                    st.subheader(f"Direct Email for: {job.get('role', 'Unnamed Role')}")
-                    st.code(email, language='markdown')
+            with st.spinner('Generating your personalized email...'):
+                loader = WebBaseLoader([url_input])
+                data = clean_text(loader.load()[0].page_content)
+                portfolio.load_portfolio()
+                links = portfolio.query_links(data.split())  # Use all words as potential skills
+                email = llm.extract_and_generate_email(data, links)
+                
+                st.subheader("Your Personalized Cold Email:")
+                st.code(email, language='markdown')
         except Exception as e:
-            st.error(f"An Error Occurred: {e}")
-            st.error(f"Error details: {str(e)}")
+            st.error(f"An Error Occurred: {str(e)}")
+            st.error("Please check your input and try again. If the problem persists, contact support.")
 
 if __name__ == "__main__":
     chain = Chain()
