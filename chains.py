@@ -14,7 +14,7 @@ class Chain:
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise ValueError("GROQ_API_KEY not found in environment variables")
-        self.llm = ChatGroq(temperature=0.6, groq_api_key=api_key, model_name="llama-3.1-70b-versatile")
+        self.llm = ChatGroq(temperature=0.6, groq_api_key=api_key, model_name="llama-3.3-70b-versatile")
 
     def extract_and_generate_email(self, cleaned_text, portfolio_links):
         prompt = PromptTemplate.from_template(
