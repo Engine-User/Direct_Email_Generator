@@ -1,2 +1,3 @@
 # Direct_Email_Generator
-With Direct Email Generator we're not just generating emails, we're generating connections.  We're not just sending messages, we're sending opportunities.
+Send customised emails for Job posts, connections etc.
+Made with Langchain, Python and AI integrations. 
